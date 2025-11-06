@@ -2,6 +2,8 @@ import requests
 import os
 import copy
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Disable SSL Warnings
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -48,7 +50,20 @@ def get_repo_list_json(logger, quay_host, app_token, api_timeout, quay_org):
     try:
         logger.debug(f"Invoke API Request Type: GET URL:{base_url} with the following headers: "
                      "{'accept': 'application/json', 'Authorization': 'Bearer <QUAY_TOKEN_OBFUSCATED> }")
-        response = requests.get(
+
+        retry_strategy = Retry(
+          total=4,  # 1 request + 3 retry
+          status_forcelist=[500, 502, 503, 504],
+          backoff_factor=30  # Pause between retries (30s, 60s, 120s)
+        )
+
+        # Attach the retry strategy to an HTTPAdapter
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session = requests.Session()
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+
+        response = session.get(
             base_url,
             headers=get_headers,
             timeout=api_timeout,
@@ -71,7 +86,7 @@ def get_repo_list_json(logger, quay_host, app_token, api_timeout, quay_org):
 
             logger.debug(f"Invoke API Request Type: GET URL:{base_url} with the following headers: "
                          "{'accept': 'application/json', 'Authorization': 'Bearer <QUAY_TOKEN_OBFUSCATED> }")
-            response = requests.get(
+            response = session.get(
                 base_url,
                 headers=get_headers,
                 timeout=api_timeout,
@@ -100,7 +115,20 @@ def get_repo_json(logger, quay_host, app_token, api_timeout, quay_org, image):
     try:
         logger.debug(f"Invoke API Request Type: GET URL:{base_url} with the following headers: "
                      "{'accept': 'application/json', 'Authorization': 'Bearer <QUAY_TOKEN_OBFUSCATED> }")
-        response = requests.get(
+
+        retry_strategy = Retry(
+          total=4,  # 1 request + 3 retry
+          status_forcelist=[500, 502, 503, 504],
+          backoff_factor=30  # Pause between retries (30s, 60s, 120s)
+        )
+
+        # Attach the retry strategy to an HTTPAdapter
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session = requests.Session()
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+
+        response = session.get(
             base_url,
             headers=get_headers,
             timeout=api_timeout,
@@ -127,7 +155,20 @@ def get_tags_json(logger, quay_host, app_token, api_timeout, quay_org, image):
     try:
         logger.debug(f"Invoke API Request Type: GET URL:{base_url} with the following headers: "
                      "{'accept': 'application/json', 'Authorization': 'Bearer <QUAY_TOKEN_OBFUSCATED> }")
-        response = requests.get(
+
+        retry_strategy = Retry(
+          total=4,  # 1 request + 3 retry
+          status_forcelist=[500, 502, 503, 504],
+          backoff_factor=30  # Pause between retries (30s, 60s, 120s)
+        )
+
+        # Attach the retry strategy to an HTTPAdapter
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        session = requests.Session()
+        session.mount("https://", adapter)
+        session.mount("http://", adapter)
+
+        response = session.get(
             base_url,
             headers=get_headers,
             timeout=api_timeout,
@@ -149,7 +190,7 @@ def get_tags_json(logger, quay_host, app_token, api_timeout, quay_org, image):
 
             logger.debug(f"Invoke API Request Type: GET URL:{base_url} with the following headers: "
                          "{'accept': 'application/json', 'Authorization': 'Bearer <QUAY_TOKEN_OBFUSCATED> }")
-            response = requests.get(
+            response = session.get(
                 base_url,
                 headers=get_headers,
                 timeout=api_timeout,
