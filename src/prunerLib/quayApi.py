@@ -77,13 +77,13 @@ def get_repo_list_json(logger, quay_host, app_token, api_timeout, quay_org):
                 timeout=api_timeout,
                 verify=False
             )
-            logger.debug(f"API Response: {response.json()}")
 
             if response.status_code != 200:
                 logger.error(f"Error Quay API request to URL {base_url} has the status code {response.status_code}. The expected status code is 200.\n"
                                  f"API response reason: {response.reason}\n"
                                  f"API response text: {response.text}")
                 os._exit(1)
+            logger.debug(f"API Response: {response.json()}")
 
             result["repositories"].extend(copy.deepcopy(response.json()["repositories"]))
 
@@ -106,13 +106,13 @@ def get_repo_json(logger, quay_host, app_token, api_timeout, quay_org, image):
             timeout=api_timeout,
             verify=False
         )
-        logger.debug(f"API Response: {response.json()}")
 
         if response.status_code != 200:
             logger.error(f"Error Quay API request to URL {base_url} has the status code {response.status_code}. The expected status code is 200.\n"
                              f"API response reason: {response.reason}\n"
                              f"API response text: {response.text}")
             os._exit(1)
+        logger.debug(f"API Response: {response.json()}")
         result = response.json()
     except requests.ConnectionError as err:
         logger.exception(f"Connection error: {err}")
@@ -133,13 +133,13 @@ def get_tags_json(logger, quay_host, app_token, api_timeout, quay_org, image):
             timeout=api_timeout,
             verify=False
         )
-        logger.debug(f"API Response: {response.json()}")
 
         if response.status_code != 200:
             logger.error(f"Error Quay API request to URL {base_url} has the status code {response.status_code}. The expected status code is 200.\n"
                              f"API response reason: {response.reason}\n"
                              f"API response text: {response.text}")
             os._exit(1)
+        logger.debug(f"API Response: {response.json()}")
         result = response.json()
 
         # Manage repository with more than 50 tags using pagination
@@ -155,13 +155,13 @@ def get_tags_json(logger, quay_host, app_token, api_timeout, quay_org, image):
                 timeout=api_timeout,
                 verify=False
             )
-            logger.debug(f"API Response: {response.json()}")
 
             if response.status_code != 200:
                 logger.error(f"Error Quay API request to URL {base_url} has the status code {response.status_code}. The expected status code is 200.\n"
                              f"API response reason: {response.reason}\n"
                              f"API response text: {response.text}")
                 os._exit(1)
+            logger.debug(f"API Response: {response.json()}")
             result["tags"].extend(copy.deepcopy(response.json()["tags"]))
 
     except requests.ConnectionError as err:
